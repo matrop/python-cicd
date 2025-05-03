@@ -33,7 +33,7 @@ jobs:
         run: |
           python -m venv /opt/poetry
           /opt/poetry/bin/pip install --no-cache-dir poetry==$POETRY_VERSION
-          ls -lisa /
+          ls -lisa $GITHUB_WORKSPACE
   
   another-job:
     name: I will eventually be a useful job
