@@ -11,7 +11,7 @@ on:
     #   - '**.py'
 
 env:
-  PYTHON_IMAGE_VERSION: 3.12-slim
+  PYTHON_IMAGE: 'python:3.12-slim'
   POETRY_VERSION: 2.1.2
   
 jobs:
@@ -21,7 +21,7 @@ jobs:
   unit-tests:
     name: Run Unit Tests
     runs-on: ubuntu-latest
-    container: python:${{ env.PYTHON_IMAGE_VERSION }}
+    container: ${{ env.PYTHON_IMAGE_VERSION }}
     steps:
       - name: Debug information
         run: echo "This job was automatically triggered by commit ${{ github.sha }}"
