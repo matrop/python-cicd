@@ -6,9 +6,9 @@ on:
     branches:
       - main
       - 'feature/**'
-    # Deactivated for testing
-    # paths:
-    #   - '**.py'
+  pull_request:
+    branches:
+      - main
 
 env:
   PYTHON_IMAGE: 'python:3.12-slim'
@@ -56,6 +56,7 @@ jobs:
     name: Scan Docker Resources
     runs-on: ubuntu-latest
     permissions:
+      # Needed for SARIF upload
       security-events: write
       actions: read
       contents: read
