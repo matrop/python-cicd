@@ -15,9 +15,6 @@ env:
   POETRY_VERSION: 2.1.2
   
 jobs:
-  # Checkout code
-  # Setup environment incl. dev dependencies using poetry
-  # Run pytest (and fail if tests fail?)
   unit-tests:
     name: Run Unit Tests
     runs-on: ubuntu-latest
@@ -25,9 +22,6 @@ jobs:
     env:
       POETRY_HOME: '/opt/poetry'
     steps:
-      - name: Debug information
-        run: echo "This job was automatically triggered by commit ${{ github.sha }}"
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
