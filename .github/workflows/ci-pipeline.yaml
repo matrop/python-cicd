@@ -50,6 +50,7 @@ jobs:
       - name: Run SAST
         run: |
           $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
+          # TODO (matrops): One could invest more effort here to generate SARIF files and integrate them in GitHub Security Monitoring
   
   scan:
     name: Scan Docker Resources
@@ -105,5 +106,3 @@ jobs:
           sarif_file: trivy-dockerfile-report.sarif
           category: trivy-dockerfile-report
       
-      # TODO: Upload scan results
-      # TODO: Fail scans in case of vulnerabilities
