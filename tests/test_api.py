@@ -27,7 +27,7 @@ def test_get_task_by_id():
         Task(id=0, name="Test Task 0"),
         Task(id=1, name="Test Task 1"),
     ]
-    assert get_task_by_id(task_list, 1) == task_list[0]
+    assert get_task_by_id(task_list, 1) == task_list[1]
 
     with pytest.raises(ValueError):
         get_task_by_id(task_list, 2)
