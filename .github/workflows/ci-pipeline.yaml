@@ -29,11 +29,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup python environment
+      - name: Setup Poetry
         run: |
           python -m venv /opt/poetry
           /opt/poetry/bin/pip install --no-cache-dir poetry==$POETRY_VERSION
-          ls -lisa $GITHUB_WORKSPACE
+      
+      - name: Install Dependencies
+        run: |
+          cd $GITHUB_WORKSPACE
+          /opt/poetry/bin/poetry install --no-root --no-interaction --with=dev
+      
+      - name: Run Pytest
+        run: |
+          poetry run pytest tests/ -v
   
   another-job:
     name: I will eventually be a useful job
