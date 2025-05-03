@@ -30,9 +30,7 @@ def get_tasks_by_tag(task_list: List[Task], tag: str) -> List[Task]:
 
 
 @app.post("/tasks")
-def create_task(
-    name: str, description: Optional[str] = None, tags: List[str] = []
-):
+def create_task(name: str, description: Optional[str] = None, tags: List[str] = []):
     id = get_new_id(task_list)
 
     new_task = Task(id=id, name=name, description=description, tags=tags)
