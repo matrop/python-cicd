@@ -52,13 +52,14 @@ jobs:
           $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
   
   scan:
-    name: Scan Docker Image
+    name: Scan Docker Resources
     runs-on: ubuntu-latest
     env: 
       PROJECT_IMAGE_NAME: tmp-image
     steps:
-      # Build project container image
-      # Scan Image with Trivy
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Install Trivy
         run: |
           # According to https://trivy.dev/latest/getting-started/installation/#debianubuntu-official
@@ -70,15 +71,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
       
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Build Project Docker Image
         run: |
-          cd $GITHUB_WORKSPACE
           docker build -t $PROJECT_IMAGE_NAME .
       
-      - name: Run Trivy Scan
+      - name: Run Trivy Image Scan
         run: |
-          trivy image $PROJECT_IMAGE_NAME
+          trivy image --format sarif -o trivy-report-image.sarif $PROJECT_IMAGE_NAME
+
+      - name: Run Trivy Dockerfile Scan
+        run: |
+          trivy config --format sarif -o trivy-report-dockerfile.sarif .
           
