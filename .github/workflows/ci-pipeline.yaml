@@ -1,0 +1,22 @@
+name: Continuous Integration
+
+# Run only on main and feature branches if Python files were changed
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+    # Deactivated for testing
+    # paths:
+    #   - '**.py'
+  
+jobs:
+  one-job:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This job was automatically triggered by commit ${{ github.sha }}"
+  
+  another-job:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Does this run in parallel?"
