@@ -104,6 +104,12 @@ jobs:
         with:
           sarif_file: trivy-dockerfile-report.sarif
           category: trivy-dockerfile-report
+      
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-reports
+          path: *.sarif
           
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities
