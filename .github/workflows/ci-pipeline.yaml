@@ -61,12 +61,12 @@ jobs:
         run: |
           # According to https://trivy.dev/latest/getting-started/installation/#debianubuntu-official
           # Hint: I'm aware that Trivy has a GitHub Action, this is just for learning purposes
-          apt-get update
-          apt-get install wget gnupg -y
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list
-          apt-get update
-          apt-get install trivy
+          sudo apt-get update
+          sudo apt-get install wget gnupg
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
       
       - name: Verify Installations
         run: |
