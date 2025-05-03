@@ -76,6 +76,10 @@ jobs:
         run: |
           docker build -t $PROJECT_IMAGE_NAME .
       
+      - name: Setup Trivy Reports Directory
+        run: |
+          mkdir -p $TRIVY_REPORT_DIR
+
       - name: Run Trivy Image Scan
         run: |
           trivy image --format sarif -o $TRIVY_REPORT_DIR/trivy-report-image.sarif $PROJECT_IMAGE_NAME
