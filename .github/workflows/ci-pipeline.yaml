@@ -85,6 +85,14 @@ jobs:
         run: |
           trivy image --format sarif -o $TRIVY_REPORT_DIR/trivy-report-image.sarif $PROJECT_IMAGE_NAME
 
+      # - name: Upload Trivy Image Scan Result
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: results.sarif
+      #     # Optional category for the results
+      #     # Used to differentiate multiple results for one commit
+      #     category: my-analysis-tool
+
       - name: Run Trivy Dockerfile Scan
         run: |
           trivy config --format sarif -o $TRIVY_REPORT_DIR/trivy-report-dockerfile.sarif .
@@ -93,7 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-reports
-          path: $TRIVY_REPORT_DIR/**
+          path: ${{ env.TRIVY_REPORT_DIR }}
 
       - name: Inspect Trivy Report Dir
         run: |
