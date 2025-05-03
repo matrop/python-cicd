@@ -22,7 +22,7 @@ jobs:
     env:
       POETRY_HOME: '/opt/poetry'
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Poetry
@@ -54,6 +54,8 @@ jobs:
   scan:
     name: Scan Docker Image
     runs-on: ubuntu-latest
+    env: 
+      PROJECT_IMAGE_NAME: tmp-image
     steps:
       # Build project container image
       # Scan Image with Trivy
@@ -68,7 +70,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
       
-      - name: Verify Installations
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Project Docker Image
         run: |
-          trivy --version
-          docker --version
+          cd $GITHUB_WORKSPACE
+          docker build -t $PROJECT_IMAGE_NAME .
+      
+      - name: Run Trivy Scan
+        run: |
+          trivy image $PROJECT_IMAGE_NAME
+          
