@@ -83,29 +83,23 @@ jobs:
 
       - name: Run Trivy Image Scan
         run: |
-          trivy image --format sarif -o $TRIVY_REPORT_DIR/trivy-report-image.sarif $PROJECT_IMAGE_NAME
+          trivy image --format sarif -o trivy-image-report.sarif $PROJECT_IMAGE_NAME
 
-      # - name: Upload Trivy Image Scan Result
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: results.sarif
-      #     # Optional category for the results
-      #     # Used to differentiate multiple results for one commit
-      #     category: my-analysis-tool
+      - name: Upload Trivy Image Scan Result
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-image-report.sarif
+          category: trivy-image-report
 
       - name: Run Trivy Dockerfile Scan
         run: |
-          trivy config --format sarif -o $TRIVY_REPORT_DIR/trivy-report-dockerfile.sarif .
+          trivy config --format sarif -o trivy-dockerfile-report.sarif .
 
-      - name: Upload Trivy Scan Results
-        uses: actions/upload-artifact@v4
+      - name: Upload Trivy Config Scan Result
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          name: trivy-reports
-          path: ${{ env.TRIVY_REPORT_DIR }}
-
-      - name: Inspect Trivy Report Dir
-        run: |
-          ls -lisa $TRIVY_REPORT_DIR
+          sarif_file: trivy-config-report.sarif
+          category: trivy-config-report
           
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities
