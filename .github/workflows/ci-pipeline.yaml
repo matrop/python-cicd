@@ -15,8 +15,8 @@ env:
   POETRY_VERSION: 2.1.2
   
 jobs:
-  unit-tests:
-    name: Run Unit Tests
+  test-and-check:
+    name: Test and Check Python Code
     runs-on: ubuntu-latest
     container: python:3.12-slim # TODO: How to use a variable here?
     env:
@@ -38,10 +38,22 @@ jobs:
       - name: Run Pytest
         run: |
           $POETRY_HOME/bin/poetry run pytest tests/ -v
+
+      - name: Run Format Check
+        run: |
+          $POETRY_HOME/bin/poetry run black --check src/ tests/
+
+      - name: Run Linting
+        run: |
+          $POETRY_HOME/bin/poetry run mypy src/
+      
+      - name: Run SAST
+        run: |
+          $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
   
   another-job:
     name: I will eventually be a useful job
     runs-on: ubuntu-latest
-    needs: unit-tests
+    needs: test-and-check
     steps:
       - run: echo "The unit tests were successful!"
