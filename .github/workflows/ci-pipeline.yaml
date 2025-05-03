@@ -94,6 +94,10 @@ jobs:
         with:
           name: trivy-reports
           path: $TRIVY_REPORT_DIR/**
+
+      - name: Inspect Trivy Report Dir
+        run: |
+          ls -lisa $TRIVY_REPORT_DIR
           
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities
