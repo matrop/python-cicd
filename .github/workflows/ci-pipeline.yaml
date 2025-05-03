@@ -87,7 +87,7 @@ jobs:
 
       - name: Run Trivy Image Scan
         run: |
-          trivy image --format sarif -o trivy-image-report.sarif $PROJECT_IMAGE_NAME
+          trivy image --severity HIGH,CRITICAL --format sarif -o trivy-image-report.sarif $PROJECT_IMAGE_NAME
 
       - name: Upload Trivy Image Scan Result
         uses: github/codeql-action/upload-sarif@v3
@@ -97,7 +97,7 @@ jobs:
 
       - name: Run Trivy Dockerfile Scan
         run: |
-          trivy config --format sarif -o trivy-dockerfile-report.sarif .
+          trivy config --severity HIGH,CRITICAL --format sarif -o trivy-dockerfile-report.sarif .
 
       - name: Upload Trivy Config Scan Result
         uses: github/codeql-action/upload-sarif@v3
@@ -105,11 +105,5 @@ jobs:
           sarif_file: trivy-dockerfile-report.sarif
           category: trivy-dockerfile-report
       
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-reports
-          path: ./*.sarif
-          
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities

@@ -12,7 +12,7 @@
 ARG INSTALLER_PATH=/build
 ARG INSTALLER_VENV_PATH=${INSTALLER_PATH}/.venv
 
-FROM python AS base
+FROM python:3.12-slim AS base
 
 # This is the first stage where we handle the installation process of necessary python dependencies
 FROM base AS installer
