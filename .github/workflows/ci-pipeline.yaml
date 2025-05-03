@@ -54,6 +54,10 @@ jobs:
   scan:
     name: Scan Docker Resources
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     env: 
       PROJECT_IMAGE_NAME: tmp-image
       TRIVY_REPORT_DIR: /tmp/trivy_reports
