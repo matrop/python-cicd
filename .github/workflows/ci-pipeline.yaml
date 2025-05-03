@@ -102,8 +102,8 @@ jobs:
       - name: Upload Trivy Config Scan Result
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: trivy-config-report.sarif
-          category: trivy-config-report
+          sarif_file: trivy-dockerfile-report.sarif
+          category: trivy-dockerfile-report
           
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities
