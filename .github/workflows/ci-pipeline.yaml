@@ -6,9 +6,9 @@ on:
     branches:
       - main
       - 'feature/**'
-    # Deactivated for testing
-    # paths:
-    #   - '**.py'
+  pull_request:
+    branches:
+      - main
 
 env:
   PYTHON_IMAGE: 'python:3.12-slim'
@@ -22,7 +22,7 @@ jobs:
     env:
       POETRY_HOME: '/opt/poetry'
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Poetry
@@ -50,10 +50,60 @@ jobs:
       - name: Run SAST
         run: |
           $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
+          # TODO (matrops): One could invest more effort here to generate SARIF files and integrate them in GitHub Security Monitoring
   
-  another-job:
-    name: I will eventually be a useful job
+  scan:
+    name: Scan Docker Resources
     runs-on: ubuntu-latest
-    needs: test-and-check
+    permissions:
+      # Needed for SARIF upload
+      security-events: write
+      actions: read
+      contents: read
+    env: 
+      PROJECT_IMAGE_NAME: tmp-image
+      TRIVY_REPORT_DIR: /tmp/trivy_reports
     steps:
-      - run: echo "The unit tests were successful!"
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          # According to https://trivy.dev/latest/getting-started/installation/#debianubuntu-official
+          # Hint: I'm aware that Trivy has a GitHub Action, this is just for learning purposes
+          sudo apt-get update
+          sudo apt-get install wget gnupg
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
+      
+      - name: Build Project Docker Image
+        run: |
+          docker build -t $PROJECT_IMAGE_NAME .
+      
+      - name: Setup Trivy Reports Directory
+        run: |
+          mkdir -p $TRIVY_REPORT_DIR
+          echo "Test" > $TRIVY_REPORT_DIR/debug.txt
+
+      - name: Run Trivy Image Scan
+        run: |
+          trivy image --severity HIGH,CRITICAL --format sarif -o trivy-image-report.sarif $PROJECT_IMAGE_NAME
+
+      - name: Upload Trivy Image Scan Result
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-image-report.sarif
+          category: trivy-image-report
+
+      - name: Run Trivy Dockerfile Scan
+        run: |
+          trivy config --severity HIGH,CRITICAL --format sarif -o trivy-dockerfile-report.sarif .
+
+      - name: Upload Trivy Config Scan Result
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-dockerfile-report.sarif
+          category: trivy-dockerfile-report
+      
