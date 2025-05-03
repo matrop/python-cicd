@@ -79,6 +79,7 @@ jobs:
       - name: Setup Trivy Reports Directory
         run: |
           mkdir -p $TRIVY_REPORT_DIR
+          echo "Test" > $TRIVY_REPORT_DIR/debug.txt
 
       - name: Run Trivy Image Scan
         run: |
