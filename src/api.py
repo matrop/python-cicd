@@ -17,7 +17,7 @@ def get_new_id(task_list: List[Task]):
     return task_list[-1].id + 1
 
 
-def get_task_by_id(task_list: List[Task], id: int) -> Optional[Task]:
+def get_task_by_id(task_list: List[Task], id: int) -> Task:
     for task in task_list:
         if id == task.id:
             return task
@@ -31,7 +31,7 @@ def get_tasks_by_tag(task_list: List[Task], tag: str) -> List[Task]:
 
 @app.post("/tasks")
 def create_task(
-    name: str, description: Optional[str] = None, tags: Optional[List[str]] = None
+    name: str, description: Optional[str] = None, tags: List[str] = []
 ):
     id = get_new_id(task_list)
 
