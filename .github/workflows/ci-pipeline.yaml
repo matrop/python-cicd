@@ -42,6 +42,10 @@ jobs:
       - name: Run Format Check
         run: |
           $POETRY_HOME/bin/poetry run black --check src/ tests/
+
+      - name: Run Linting
+        run: |
+          $POETRY_HOME/bin/poetry run mypy src/
   
   another-job:
     name: I will eventually be a useful job
