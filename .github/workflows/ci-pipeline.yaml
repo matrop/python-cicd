@@ -46,6 +46,10 @@ jobs:
       - name: Run Linting
         run: |
           $POETRY_HOME/bin/poetry run mypy src/
+      
+      - name: Run SAST
+        run: |
+          $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
   
   another-job:
     name: I will eventually be a useful job
