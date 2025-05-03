@@ -93,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trivy-reports
-          path: $TRIVY_REPORT_DIR
+          path: $TRIVY_REPORT_DIR/**
           
       # TODO: Upload scan results
       # TODO: Fail scans in case of vulnerabilities
