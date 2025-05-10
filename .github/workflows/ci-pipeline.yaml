@@ -89,7 +89,9 @@ jobs:
         with:
           load: true # Image is available locally for Trivy
           tags: ${{ env.PROJECT_IMAGE_NAME }}
-          # outputs: type=docker,dest=${{ env.IMAGE_TARBALL_PATH }}
+          outputs: |
+            type=docker 
+            type=docker,dest=${{ env.IMAGE_TARBALL_PATH }}
 
       - name: Test docker image
         run: |
