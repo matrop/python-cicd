@@ -94,7 +94,7 @@ jobs:
       - name: Test docker image
         run: |
           docker images
-          ls -lisa /tmp/*.tar
+          ls -lisa /tmp/
       
       - name: Setup Trivy Reports Directory
         run: |
