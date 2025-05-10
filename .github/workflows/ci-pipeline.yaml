@@ -88,6 +88,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: false
+          load: true # Image is available locally for Trivy
           tags: ${{ env.PROJECT_IMAGE_NAME }}
           outputs: type=docker,dest=${{ env.IMAGE_TARBALL_PATH }}
       
