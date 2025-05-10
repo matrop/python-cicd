@@ -62,7 +62,7 @@ jobs:
       contents: read
     env: 
       PROJECT_IMAGE_NAME: shortwave6046/tmp-image:latest # TODO: Secret!
-      IMAGE_TARBALL_PATH: ${{ format('{0}/built_image.tar', runner.temp }}
+      IMAGE_TARBALL_PATH: /tmp/built_image.tar'
       TRIVY_REPORT_DIR: /tmp/trivy_reports
     steps:
       - name: Checkout Repository
