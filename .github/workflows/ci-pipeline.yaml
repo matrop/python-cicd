@@ -1,18 +1,15 @@
 name: Continuous Integration
 
-# Run only on main and feature branches if Python files were changed
 on:
   push:
     branches:
       - main
       - 'feature/**'
-  pull_request:
-    branches:
-      - main
 
 env:
   PYTHON_IMAGE: 'python:3.12-slim'
   POETRY_VERSION: 2.1.2
+  DOCKER_BUILD_SUMMARY: false # Deactivate build summary generation
   
 jobs:
   test-and-check:
@@ -47,13 +44,13 @@ jobs:
         run: |
           $POETRY_HOME/bin/poetry run mypy src/
       
+      # TODO (matrops): One could invest more effort here to generate SARIF files and integrate them in GitHub Security Monitoring
       - name: Run SAST
         run: |
           $POETRY_HOME/bin/poetry run bandit src/ -r -ll  # Report medium vulnerabilities or higher
-          # TODO (matrops): One could invest more effort here to generate SARIF files and integrate them in GitHub Security Monitoring
   
-  scan:
-    name: Scan Docker Resources
+  scan-and-push:
+    name: Scan and Push Docker Resources
     runs-on: ubuntu-latest
     permissions:
       # Needed for SARIF upload
@@ -61,26 +58,34 @@ jobs:
       actions: read
       contents: read
     env: 
-      PROJECT_IMAGE_NAME: tmp-image
+      BUILD_IMAGE_NAME: tmp-image:latest
+      PUSH_IMAGE_NAME: python-cicd
       TRIVY_REPORT_DIR: /tmp/trivy_reports
+    needs: test-and-check 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # I'm aware that Trivy has a GitHub Action, this is just for learning purposes
       - name: Install Trivy
         run: |
           # According to https://trivy.dev/latest/getting-started/installation/#debianubuntu-official
-          # Hint: I'm aware that Trivy has a GitHub Action, this is just for learning purposes
           sudo apt-get update
           sudo apt-get install wget gnupg
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
           echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
           sudo apt-get update
           sudo apt-get install trivy
-      
+
+      # Recommended in https://github.com/docker/build-push-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Project Docker Image
-        run: |
-          docker build -t $PROJECT_IMAGE_NAME .
+        uses: docker/build-push-action@v6
+        with:
+          load: true
+          tags: ${{ env.BUILD_IMAGE_NAME }}
       
       - name: Setup Trivy Reports Directory
         run: |
@@ -89,7 +94,7 @@ jobs:
 
       - name: Run Trivy Image Scan
         run: |
-          trivy image --severity HIGH,CRITICAL --format sarif -o trivy-image-report.sarif $PROJECT_IMAGE_NAME
+          trivy image --severity HIGH,CRITICAL --format sarif -o trivy-image-report.sarif $BUILD_IMAGE_NAME
 
       - name: Upload Trivy Image Scan Result
         uses: github/codeql-action/upload-sarif@v3
@@ -106,4 +111,35 @@ jobs:
         with:
           sarif_file: trivy-dockerfile-report.sarif
           category: trivy-dockerfile-report
+
+      # === Push Docker Image to registry ===
+      # My first approach was separating the Image Test and Push Stages, however this created too much hassle.
+      # Reason was that I wanted to avoid building the image twice. However, splitting the build and the push stages 
+      # meant that I had to use artifacts to upload the built image in one stage and download & handle it in another
+      # I'm sure this would work eventually, however using the current approach was much faster and easier. Only
+      # downside is that image scanning and code testing is not parallelized anymore, resulting in a slightly 
+      # slower CI/CD runtime.
+    
+      - name: Log into Docker Hub
+        if: github.ref_name == 'main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       
+      - name: Get Image Version
+        if: github.ref_name == 'main'
+        id: get_image_version
+        run: |
+          IMAGE_VERSION=$(grep '^version = ' pyproject.toml | awk -F" " {'print $3'} | sed s/\"//g)
+          echo "Using image version '$IMAGE_VERSION'"
+          echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push Docker Image
+        if: github.ref_name == 'main'
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PUSH_IMAGE_NAME }}:${{ steps.get_image_version.outputs.image_version }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PUSH_IMAGE_NAME }}:latest
