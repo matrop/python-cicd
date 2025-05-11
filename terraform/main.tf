@@ -8,8 +8,9 @@ resource "azurerm_container_group" "container" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   ip_address_type     = "Public"
-  os_type                 = "Linux"
+  os_type             = "Linux"
   restart_policy      = var.container_group_restart_policy
+  some_none_existent_property = true
 
   container {
     name   = var.container_name
