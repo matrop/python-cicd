@@ -15,3 +15,4 @@ Source: https://learn.microsoft.com/en-us/azure/container-instances/container-in
 **How to manage Terraform state?**
 - GitHub has no feature to store the Terraform state like GitLab
 - I'll use an Azure Storage Account
+- https://developer.hashicorp.com/terraform/language/backend/azurerm#azure-active-directory
