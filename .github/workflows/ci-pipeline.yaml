@@ -18,8 +18,9 @@ jobs:
   check-infra-code:
     name: Check Infrastructure Code
     runs-on: ubuntu-latest
-    env: 
-      TERRAFORM_ROOT_DIR: 'terraform'
+    defaults:
+      run:
+        working-directory: ./terraform
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -29,12 +30,10 @@ jobs:
       
       - name: Run Format Check
         run: |
-          cd $TERRAFORM_ROOT_DIR
           terraform fmt -check -diff
       
       - name: Terraform Init
         run: |
-          pwd
           terraform init -input=false -backend=false
 
       - name: Run Validation
