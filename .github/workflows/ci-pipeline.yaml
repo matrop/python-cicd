@@ -7,7 +7,6 @@ on:
       - 'feature/**'
     paths-ignore:
       - 'images/**'
-      - 'terraform/**'
       - '**/*.md'
 
 env:
@@ -16,6 +15,31 @@ env:
   DOCKER_BUILD_SUMMARY: false # Deactivate build summary generation
   
 jobs:
+  check-infra-code:
+    name: Check Infrastructure Code
+    runs-on: ubuntu-latest
+    env: 
+      TERRAFORM_ROOT_DIR: 'terraform'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Init Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Run Format Check
+        run: |
+          cd $TERRAFORM_ROOT_DIR
+          terraform fmt -check -diff
+      
+      - name: Terraform Init
+        run: |
+          terraform init -input=false -backend=false
+
+      - name: Run Validation
+        run: |
+          terraform validate
+
   test-and-check:
     name: Test and Check Python Code
     runs-on: ubuntu-latest
