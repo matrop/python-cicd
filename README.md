@@ -17,6 +17,7 @@ Source: https://learn.microsoft.com/en-us/azure/container-instances/container-in
     - Seems to be by design: https://learn.microsoft.com/en-us/answers/questions/2073829/azure-github-action-federated-identity-login-issue
 - TODO: Research how OIDC works exactly
 - TODO: Explain that I will not separate environments here, though for real-life it would be mandatory
+- TODO: Main resource group already exists in terraform setup
 
 **How to manage Terraform state?**
 - GitHub has no feature to store the Terraform state like GitLab
