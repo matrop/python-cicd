@@ -1,7 +1,6 @@
 name: Infrastructure Pipeline
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -37,5 +36,5 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-          --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }}
+          --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }} \
           --backend-config=tenant_id=${{ secrets.ARM_TENANT_ID }}
