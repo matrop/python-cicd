@@ -48,6 +48,6 @@ jobs:
           terraform plan -var-file=$TF_ENV_VARS_FILE_PATH -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
-        if: github.ref_name == 'main'
+        # if: github.ref_name == 'main'
         run: |
           terraform apply -var-file=$TF_ENV_VARS_FILE_PATH -auto-approve $TF_PLAN_FILE_PATH
