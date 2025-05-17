@@ -21,7 +21,4 @@ jobs:
       
       - name: Terraform Init
         run: |
-          ARM_USE_AZUREAD=true
-          ARM_TENANT_ID=TODO_TENANT_ID_HERE
-          ARM_ACCESS_KEY=${{ secrets.ARM_ACCESS_KEY }}
           terraform init

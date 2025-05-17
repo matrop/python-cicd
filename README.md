@@ -11,6 +11,8 @@ A learning experience for setting up a CI/CD pipeline for Python
 ## Infrastructure
 
 Source: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-quickstart-terraform
+- Created managed identity `infra-user-dev`
+- Use Federated Identity Credentials to enable OIDC and avoid managing (and rotating) secrets
 
 **How to manage Terraform state?**
 - GitHub has no feature to store the Terraform state like GitLab
