@@ -13,7 +13,7 @@ permissions:
   id-token: write # Needed for Azure CLI Login
 
 env:
-  TF_ENV_VARS_FILE_PATH: 'terraform/environments/dev.tfvars'
+  TF_ENV_VARS_FILE_PATH: 'environments/dev.tfvars'
   TF_PLAN_FILE_PATH: '/tmp/tf_plan'
 
 jobs:
@@ -45,7 +45,6 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          pwd
           terraform plan -var-file=$TF_ENV_VARS_FILE_PATH -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
