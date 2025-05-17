@@ -12,6 +12,10 @@ on:
 permissions:
   id-token: write # Needed for Azure CLI Login
 
+env:
+  TF_ENV_VARS_FILE_PATH: 'terraform/environments/dev.tfvars'
+  TF_PLAN_FILE_PATH: '/tmp/tf_plan'
+
 jobs:
   run-tf:
     name: "Run Terraform Code"
@@ -38,3 +42,12 @@ jobs:
           terraform init \
           --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }} \
           --backend-config=tenant_id=${{ secrets.ARM_TENANT_ID }}
+
+      - name: Terraform Plan
+        run: |
+          terraform plan -var-file=$TF_ENV_VARS_FILE_PATH -out=$TF_PLAN_FILE_PATH
+
+      - name: Terraform Apply
+        if: github.ref_name == 'main'
+        run: |
+          terraform apply -var-file=$TF_ENV_VARS_FILE_PATH -auto-approve $TF_PLAN_FILE_PATH
