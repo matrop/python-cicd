@@ -1,4 +1,4 @@
-resource_group_name     = "maurice-sample-rg-dev"
+resource_group_name     = "mauriceatrops-dev"
 resource_group_location = "westeurope"
 
 container_group_name           = "maurice-sample-container-group-dev"
