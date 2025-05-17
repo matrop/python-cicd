@@ -13,6 +13,9 @@ A learning experience for setting up a CI/CD pipeline for Python
 Source: https://learn.microsoft.com/en-us/azure/container-instances/container-instances-quickstart-terraform
 - Created managed identity `infra-user-dev`
 - Use Federated Identity Credentials to enable OIDC and avoid managing (and rotating) secrets
+- Problem: Azure needs exact branch path for credential (no wildcard)
+    - Seems to be by design: https://learn.microsoft.com/en-us/answers/questions/2073829/azure-github-action-federated-identity-login-issue
+- TODO: Research how OIDC works exactly
 
 **How to manage Terraform state?**
 - GitHub has no feature to store the Terraform state like GitLab

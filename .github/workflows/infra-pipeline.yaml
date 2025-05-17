@@ -26,13 +26,15 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: c3971fe8-fae4-4df5-91f3-4b2e71078ffe 
-          tenant-id: e5f140b4-77b2-48a0-9775-fe7437c50fa6
-          subscription-id: 486b8df7-bf37-4b89-a5ee-c43cf5ec2b05
+          client-id: ${{ secrets.INFRA_ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
       
       - name: Terraform Init
         run: |
-          terraform init
+          terraform init \
+          --backend-config=ARM_CLIENT_ID=${{ secrets.INFRA_ARM_CLIENT_ID }}
+          --backend-config=ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
