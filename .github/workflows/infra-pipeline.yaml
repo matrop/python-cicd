@@ -45,6 +45,7 @@ jobs:
 
       - name: Terraform Plan
         run: |
+          pwd
           terraform plan -var-file=$TF_ENV_VARS_FILE_PATH -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
