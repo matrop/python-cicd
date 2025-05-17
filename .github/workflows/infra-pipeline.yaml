@@ -36,5 +36,5 @@ jobs:
       - name: Terraform Init
         run: |
           terraform init \
-          --backend-config=ARM_CLIENT_ID=${{ secrets.INFRA_ARM_CLIENT_ID }}
-          --backend-config=ARM_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
+          --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }}
+          --backend-config=tenant_id=${{ secrets.ARM_TENANT_ID }}
