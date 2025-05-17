@@ -6,6 +6,7 @@ on:
       - main
       - 'feature/**'
     paths:
+      - '.github/workflows/ci-pipeline.yaml'
       - 'src/**/*'
       - 'tests/**/*'
       - 'terraform/**/*'

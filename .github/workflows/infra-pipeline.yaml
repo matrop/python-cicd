@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - 'feature/**'
+    paths:
+      - '.github/workflows/infra-pipeline.yaml'
+      - 'terraform/**/*'
+
+permissions:
+  id-token: write # Needed for Azure CLI Login
 
 jobs:
   run-tf:
