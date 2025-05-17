@@ -17,6 +17,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: c3971fe8-fae4-4df5-91f3-4b2e71078ffe 
+          tenant-id: e5f140b4-77b2-48a0-9775-fe7437c50fa6
+          subscription-id: 486b8df7-bf37-4b89-a5ee-c43cf5ec2b05
+
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
       
