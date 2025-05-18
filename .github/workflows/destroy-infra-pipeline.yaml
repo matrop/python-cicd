@@ -2,9 +2,6 @@ name: Destroy Infrastructure Pipeline
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'feature/**'
 
 permissions:
   id-token: write # Needed for Azure CLI Login
