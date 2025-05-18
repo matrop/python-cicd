@@ -1,0 +1,64 @@
+name: Create Infrastructure Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+    paths:
+      - '.github/workflows/create-infra-pipeline.yaml'
+      - 'terraform/**/*.tf'
+      - 'terraform/**/*.tfvars'
+
+permissions:
+  id-token: write # Needed for Azure CLI Login
+
+env:
+  TF_ENV_VARS_FILE_PATH: 'environments/dev.tfvars'
+  TF_PLAN_FILE_PATH: '/tmp/tf_plan'
+
+jobs:
+  run-tf:
+    name: "Run Terraform Code"
+    runs-on: ubuntu-latest
+    environment: development # This would need to be environment-specific
+    defaults:
+      run:
+        working-directory: ./terraform
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.INFRA_ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Init Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform Init
+        run: |
+          terraform init \
+          --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }} \
+          --backend-config=tenant_id=${{ secrets.ARM_TENANT_ID }}
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+          -var-file=$TF_ENV_VARS_FILE_PATH \
+          -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
+          -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
+          -out=$TF_PLAN_FILE_PATH
+
+      - name: Terraform Apply
+        if: github.ref_name == 'main'
+        run: |
+          terraform apply \
+          -var-file=$TF_ENV_VARS_FILE_PATH \
+          -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
+          -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
+          -auto-approve \
+          $TF_PLAN_FILE_PATH
