@@ -44,4 +44,5 @@ jobs:
           terraform destroy \
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
-          -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}'
+          -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
+          -auto-approve
