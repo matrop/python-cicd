@@ -45,7 +45,10 @@ jobs:
 
       - name: Terraform Plan
         run: |
-          terraform plan -var-file=$TF_ENV_VARS_FILE_PATH -out=$TF_PLAN_FILE_PATH
+          terraform plan \
+          -var-file=$TF_ENV_VARS_FILE_PATH \
+          -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
+          -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
         # if: github.ref_name == 'main'
