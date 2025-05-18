@@ -8,7 +8,7 @@ resource "azurerm_container_group" "container" {
 
   container {
     name   = var.container_name
-    image  = var.container_image
+    image  = "${var.dockerhub_username}/${var.container_image}"
     cpu    = var.container_cpu_cores
     memory = var.container_memory_in_gb
 

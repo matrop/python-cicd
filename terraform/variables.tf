@@ -46,3 +46,10 @@ variable "container_port" {
   type        = number
   description = "Port that the container exposes"
 }
+
+variable "dockerhub_username" {
+  type        = string
+  sensitive   = true
+  default     = "n/a"
+  description = "Username (and repo name) for the image repository on Dockerhub"
+}
