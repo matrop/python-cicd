@@ -8,4 +8,4 @@ container_name         = "python-cicd-container"
 container_image        = "python-cicd:latest"
 container_cpu_cores    = 1
 container_memory_in_gb = 1
-container_port         = 80
+container_port         = 8080
