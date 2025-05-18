@@ -20,6 +20,7 @@ jobs:
   run-tf:
     name: "Run Terraform Code"
     runs-on: ubuntu-latest
+    environment: development # This would need to be environment-specific
     defaults:
       run:
         working-directory: ./terraform
