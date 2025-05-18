@@ -6,7 +6,7 @@ on:
       - main
       - 'feature/**'
     paths:
-      - '.github/workflows/infra-pipeline.yaml'
+      - '.github/workflows/create-infra-pipeline.yaml'
       - 'terraform/**/*'
 
 permissions:
