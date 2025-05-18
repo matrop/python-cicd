@@ -38,4 +38,5 @@ jobs:
 
       - name: Terraform Destroy
         run: |
-          terraform destroy
+          terraform destroy \
+          -var-file=$TF_ENV_VARS_FILE_PATH
