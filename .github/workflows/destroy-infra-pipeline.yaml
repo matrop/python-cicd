@@ -9,6 +9,9 @@ on:
 permissions:
   id-token: write # Needed for Azure CLI Login
 
+env:
+  TF_ENV_VARS_FILE_PATH: 'environments/dev.tfvars'
+
 jobs:
   run-tf:
     name: "Run Terraform Code"
