@@ -9,5 +9,6 @@ A learning experience for setting up a CI/CD pipeline for Python
 ## Infrastructure 
 
 TODO: Infrastructure Sketch
+TODO: List and explain GitHub Action Pipelines
 
 For more detailed info see [Infrastructure README](terraform/README.md).
