@@ -9,7 +9,8 @@ on:
       - '.github/workflows/ci-pipeline.yaml'
       - 'src/**/*'
       - 'tests/**/*'
-      - 'terraform/**/*'
+      - 'terraform/**/*.tf'
+      - 'terraform/**/*.tfvars'
       - 'Dockerfile'
       - 'pyproject.toml'
 
