@@ -1,4 +1,4 @@
-name: Infrastructure Pipeline
+name: Create Infrastructure Pipeline
 
 on:
   push:

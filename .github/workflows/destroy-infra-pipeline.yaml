@@ -1,0 +1,38 @@
+name: Destroy Infrastructure Pipeline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write # Needed for Azure CLI Login
+
+jobs:
+  run-tf:
+    name: "Run Terraform Code"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.INFRA_ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Init Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform Init
+        run: |
+          terraform init \
+          --backend-config=client_id=${{ secrets.INFRA_ARM_CLIENT_ID }} \
+          --backend-config=tenant_id=${{ secrets.ARM_TENANT_ID }}
+
+      - name: Terraform Destroy
+        run: |
+          terraform destroy
