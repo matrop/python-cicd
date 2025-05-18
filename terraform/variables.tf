@@ -50,6 +50,11 @@ variable "container_port" {
 variable "dockerhub_username" {
   type        = string
   sensitive   = true
-  default     = "n/a"
   description = "Username (and repo name) for the image repository on Dockerhub"
+}
+
+variable "dockerhub_password" {
+  type        = string
+  sensitive   = true
+  description = "Pasword for the image repository on Dockerhub"
 }

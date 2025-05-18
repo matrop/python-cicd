@@ -17,4 +17,10 @@ resource "azurerm_container_group" "container" {
       protocol = "TCP"
     }
   }
+
+  image_registry_credential {
+    server   = "index.docker.io"
+    username = var.dockerhub_username
+    password = var.dockerhub_password
+  }
 }

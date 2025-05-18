@@ -48,6 +48,7 @@ jobs:
           terraform plan \
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
+          -var 'dockerhub_password=${{ secrets.DOCKERHUB_PASSWORD }}' \
           -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
@@ -56,5 +57,6 @@ jobs:
           terraform apply \
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
+          -var 'dockerhub_password=${{ secrets.DOCKERHUB_PASSWORD }}' \
           -auto-approve \
           $TF_PLAN_FILE_PATH
