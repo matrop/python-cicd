@@ -2,9 +2,12 @@
 A learning experience for setting up a CI/CD pipeline for Python
 
 ## ToDo
-- Create (separate?) pipeline to run continuous delivery on newly setup infrastructure
+- Rename infrastructure pipeline to CD pipeline
+- Trigger CD pipeline after successful CI run (or manually)
+- Include a health check into CD pipeline (curl with x retries and exponential backoff?)
 - Check remaining TODO comments
 - Add project documentation
+
 
 ## Infrastructure 
 
