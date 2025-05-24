@@ -30,6 +30,12 @@ jobs:
 
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
+
+      - name: Get Image Version
+        id: get_image_version
+        run: |
+          IMAGE_VERSION=$(grep '^version = ' $GITHUB_WORKSPACE/pyproject.toml | awk -F" " {'print $3'} | sed s/\"//g)
+          echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
       
       - name: Terraform Init
         run: |
@@ -43,4 +49,5 @@ jobs:
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
+          -var 'container_image_version=${{ steps.get_image_version.outputs.image_version }}' \
           -auto-approve
