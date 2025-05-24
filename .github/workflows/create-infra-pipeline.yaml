@@ -38,6 +38,8 @@ jobs:
 
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.1"
       
       - name: Terraform Init
         run: |
@@ -54,7 +56,7 @@ jobs:
           -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
-        if: github.ref_name == 'main'
+        # if: github.ref_name == 'main'
         run: |
           terraform apply \
           -var-file=$TF_ENV_VARS_FILE_PATH \
@@ -62,3 +64,28 @@ jobs:
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
           -auto-approve \
           $TF_PLAN_FILE_PATH
+
+      - name: Terraform Output
+        id: tf_output
+        run: |
+          echo "container_ip=$(terraform output -raw container_ipv4_address)" >> $GITHUB_OUTPUT
+      
+      - name: Healthcheck
+        run: |
+          NUM_TRIES=10
+          BACKOFF_SEC=5
+
+          echo "Checking health of container at IP '${{ steps.tf_output.outputs.container_ip }}'"
+          for try in $(seq $NUM_TRIES); do 
+            sleep $BACKOFF_SEC
+            HTTP_CODE=$(curl -o /dev/null -w "%{http_code}" ${{ steps.tf_output.outputs.container_ip }})
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "Healthcheck successful"
+              exit 0
+            else
+              echo "Try $try failed - Got HTTP code $HTTP_CODE"
+            fi
+          done
+          
+          echo "Could not verify health of container"
+          exit 1
