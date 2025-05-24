@@ -52,7 +52,7 @@ jobs:
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
-          -var 'container_image_version=$IMAGE_VERSION"' \
+          -var 'container_image_version=$IMAGE_VERSION' \
           -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
@@ -64,7 +64,7 @@ jobs:
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
-          -var 'container_image_version=$IMAGE_VERSION"' \
+          -var 'container_image_version=$IMAGE_VERSION' \
           -auto-approve \
           $TF_PLAN_FILE_PATH
 
