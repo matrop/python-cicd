@@ -32,6 +32,8 @@ jobs:
 
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.1"
       
       - name: Run Format Check
         run: |

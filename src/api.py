@@ -56,3 +56,8 @@ def list_tasks(tag: Optional[str] = None):
     if tag:
         return {"tasks": [task.dict() for task in get_tasks_by_tag(task_list, tag)]}
     return {"tasks": [task.dict() for task in task_list]}
+
+
+@app.get("/healthcheck")
+def healthcheck():
+    return "Healthy"
