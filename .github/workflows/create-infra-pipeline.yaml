@@ -1,21 +1,20 @@
 name: Create Infrastructure Pipeline
 
 on:
-  push:
-    branches:
-      - main
-      - 'feature/**'
-    paths:
-      - '.github/workflows/create-infra-pipeline.yaml'
-      - 'terraform/**/*.tf'
-      - 'terraform/**/*.tfvars'
+  workflow_dispatch:
+    inputs:
+      apply_changes:
+        description: "Apply Terraform Changes?"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   id-token: write # Needed for Azure CLI Login
 
 env:
-  TF_ENV_VARS_FILE_PATH: 'environments/dev.tfvars'
-  TF_PLAN_FILE_PATH: '/tmp/tf_plan'
+  TF_ENV_VARS_FILE_PATH: "environments/dev.tfvars" # This would need to be environment-specific
+  TF_PLAN_FILE_PATH: "/tmp/tf_plan"
 
 jobs:
   run-tf:
@@ -38,7 +37,9 @@ jobs:
 
       - name: Init Terraform CLI
         uses: hashicorp/setup-terraform@v3
-      
+        with:
+          terraform_version: "1.12.1"
+
       - name: Terraform Init
         run: |
           terraform init \
@@ -54,7 +55,7 @@ jobs:
           -out=$TF_PLAN_FILE_PATH
 
       - name: Terraform Apply
-        if: github.ref_name == 'main'
+        if: ${{ github.event.inputs.apply_changes == 'true' }}
         run: |
           terraform apply \
           -var-file=$TF_ENV_VARS_FILE_PATH \
@@ -62,3 +63,30 @@ jobs:
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
           -auto-approve \
           $TF_PLAN_FILE_PATH
+
+      - name: Terraform Output
+        if: ${{ github.event.inputs.apply_changes == 'true' }}
+        id: tf_output
+        run: |
+          echo "container_ip=$(terraform output -raw container_ipv4_address)" >> $GITHUB_OUTPUT
+
+      - name: Healthcheck
+        if: ${{ github.event.inputs.apply_changes == 'true' }}
+        run: |
+          NUM_TRIES=10
+          BACKOFF_SEC=5
+
+          echo "Checking health of container at IP '${{ steps.tf_output.outputs.container_ip }}'"
+          for try in $(seq $NUM_TRIES); do 
+            sleep $BACKOFF_SEC
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.tf_output.outputs.container_ip }}:8080/healthcheck)
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "Healthcheck successful"
+              exit 0
+            else
+              echo "Try $try failed - Got HTTP code $HTTP_CODE"
+            fi
+          done
+
+          echo "Could not verify health of container"
+          exit 1
