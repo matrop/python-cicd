@@ -32,6 +32,11 @@ variable "container_image" {
   description = "Name of the image that should be run"
 }
 
+variable "container_image_version" {
+  type        = string
+  description = "Version of the image that should be run"
+}
+
 variable "container_cpu_cores" {
   type        = number
   description = "Number of cpu cores the container will have available"

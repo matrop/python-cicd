@@ -57,10 +57,13 @@ jobs:
       - name: Terraform Apply
         if: ${{ github.event.inputs.apply_changes == 'true' }}
         run: |
+          IMAGE_VERSION=$(grep '^version = ' pyproject.toml | awk -F" " {'print $3'} | sed s/\"//g)
+
           terraform apply \
           -var-file=$TF_ENV_VARS_FILE_PATH \
           -var 'dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }}' \
           -var 'dockerhub_password=${{ secrets.DOCKERHUB_TOKEN }}' \
+          -var 'container_image_version=$IMAGE_VERSION"'
           -auto-approve \
           $TF_PLAN_FILE_PATH
 
