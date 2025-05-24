@@ -87,7 +87,7 @@ jobs:
           echo "Checking health of container at IP '${{ steps.tf_output.outputs.container_ip }}'"
           for try in $(seq $NUM_TRIES); do 
             sleep $BACKOFF_SEC
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.tf_output.outputs.container_ip }}:8080/healthcheck)
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ steps.tf_output.outputs.container_ip }}:8080/healthcheck)
             if [ "$HTTP_CODE" -eq 200 ]; then
               echo "Healthcheck successful"
               exit 0
