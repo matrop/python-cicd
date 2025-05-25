@@ -36,7 +36,7 @@ RUN python -m venv ${POETRY_HOME} \
 WORKDIR ${INSTALLER_PATH}
 
 # Mount poetry-related files from the project into the container. This way poetry knows what packages to install
-# COPY would also be suitable here, but (TODO)
+# COPY would also be suitable here, but this way we can save a layer in the docker image.
 # After that, instruct Poetry to install only the main (i.e. no dev) dependencies and clear the cache
 # Most importantly: The dependencies are installed into the INSTALLER_VENV_PATH, since we instructed Poetry to 
 # build a venv and do it in the project directory (POETRY_VIRTUALENVS_* variables). 
